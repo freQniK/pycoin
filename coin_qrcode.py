@@ -9,12 +9,16 @@ from PIL import ImageOps
     
 local_dir = getcwd()    
 IMGDIR = path.join(local_dir, "coin_imgs")
+FONTDIR = path.join(local_dir, "fonts")
 
 def QRCode(DepositCoin, DepositAddress):
     
 
+    from PIL.ImtImagePlugin import ImtImageFile
+    from youtube_dl.extractor import streamable
+    from youtube_dl.extractor import streamable
     coinLogo =  DepositCoin + '.png'
-    logo = Image.open(coinLogo)
+    logo = Image.open(path.join(IMGDIR,coinLogo))
     basewidth = 100
      
     # adjust image size
@@ -50,25 +54,24 @@ def QRCode(DepositCoin, DepositAddress):
         fontSize = 10
         
     background = Image.new('RGBA', (QRimg.size[0], QRimg.size[1] + 15), (255,255,255,255))
-    robotoFont = ImageFont.truetype('Roboto-BoldItalic.ttf', fontSize)
+    robotoFont = ImageFont.truetype(path.join(FONTDIR,'Roboto-BoldItalic.ttf'), fontSize)
 
     draw = ImageDraw.Draw(background)
-    w,h  = draw.textsize(DepositAddress)
+    _, _, w, h = draw.textbbox((0, 0), text=str(DepositAddress))
     draw.text(((QRimg.size[0]+15 - w)/2,QRimg.size[1]-2),DepositAddress, (0,0,0), font=robotoFont)
     
     background.paste(QRimg, (0,0))
     background.save(os.path.join(IMGDIR, DepositCoin + "-TO" + ".png"))
     to_coin_img = os.path.join(IMGDIR, DepositCoin + "-TO" + ".png")
-    print(os.path.isfile(to_coin_img)) 
     #display
-    img = Image.open(to_coin_img)
+    img = Image.open(to_coin_img) 
     img.show()
     
     
 def main():
     DepositCoin = input("Coin: ")
     DepositAddress = input("Address: ")
-    QRCode(DepositCoin, DepositAddress)
+    QRCode(DepositCoin.upper(), DepositAddress)
 
 if __name__ == '__main__': 
     main()
